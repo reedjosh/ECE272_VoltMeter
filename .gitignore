@@ -1,0 +1,26 @@
+
+# Lattice Diamond
+*.html
+impl*/
+*.xml
+.build_status
+.run_manager.ini
+.recovery
+*.dir/
+*.log
+*.tcl
+*.ccl
+*.srp
+
+# KiCad
+*.000
+*.bak
+*.bck
+*.kicad_pcb-bak
+*~
+_autosave-*
+*.tmp
+*.net
+.dsn
+*.xml
+*.csv

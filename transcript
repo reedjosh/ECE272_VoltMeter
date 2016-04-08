@@ -1,0 +1,118 @@
+project open /home/josh/Documents/DDesign/MSim_PRJ/ADC_Lab
+# Project file /home/josh/Documents/DDesign/MSim_PRJ/ADC_Lab.mpf was not found.
+# Unable to open project.
+# Loading project spi_master
+# Compile of spi_master.sv was successful.
+vsim work.spi_master_tb
+# vsim work.spi_master_tb 
+# Start time: 16:04:35 on Apr 05,2016
+# Loading sv_std.std
+# Loading work.spi_master_tb
+# Loading work.spi_master
+# ** Warning: (vsim-3017) /home/josh/Documents/dDesign/spi_master.sv(88): [TFMPC] - Too few port connections. Expected 9, found 7.
+#    Time: 0 ps  Iteration: 0  Instance: /spi_master_tb/uut File: /home/josh/Documents/dDesign/spi_master.sv
+# ** Warning: (vsim-3722) /home/josh/Documents/dDesign/spi_master.sv(88): [TFMPC] - Missing connection for port 'reset'.
+# ** Warning: (vsim-3722) /home/josh/Documents/dDesign/spi_master.sv(88): [TFMPC] - Missing connection for port 'done'.
+# Compile of spi_master.sv failed with 1 errors.
+# Compile of spi_master.sv was successful.
+add wave -position end  sim:/spi_master_tb/uut/clk
+add wave -position end  sim:/spi_master_tb/uut/reset
+add wave -position end  sim:/spi_master_tb/uut/MISO
+add wave -position end  sim:/spi_master_tb/uut/transmit
+add wave -position end  sim:/spi_master_tb/uut/to_send
+add wave -position end  sim:/spi_master_tb/uut/MOSI
+add wave -position end  sim:/spi_master_tb/uut/SCK
+add wave -position end  sim:/spi_master_tb/uut/received
+add wave -position end  sim:/spi_master_tb/uut/done
+add wave -position end  sim:/spi_master_tb/uut/state
+add wave -position end  sim:/spi_master_tb/uut/cnt
+add wave -position end  sim:/spi_master_tb/uut/hold_to_send
+run
+# ** Warning: (vsim-3116) Problem reading symbols from linux-gate.so.1 : can not open ELF file.
+#                    0 << Sim starting >> 
+restart
+# Loading work.spi_master_tb
+# Loading work.spi_master
+# ** Warning: (vsim-3017) /home/josh/Documents/dDesign/spi_master.sv(86): [TFMPC] - Too few port connections. Expected 9, found 8.
+#    Time: 0 ps  Iteration: 0  Instance: /spi_master_tb/uut File: /home/josh/Documents/dDesign/spi_master.sv
+# ** Warning: (vsim-3722) /home/josh/Documents/dDesign/spi_master.sv(86): [TFMPC] - Missing connection for port 'done'.
+run
+# ** Warning: (vsim-3116) Problem reading symbols from linux-gate.so.1 : can not open ELF file.
+#                    0 << Sim starting >> 
+# Compile of spi_master.sv was successful.
+restart
+# Loading work.spi_master_tb
+# Loading work.spi_master
+# ** Warning: (vsim-3017) /home/josh/Documents/dDesign/spi_master.sv(87): [TFMPC] - Too few port connections. Expected 9, found 8.
+#    Time: 0 ps  Iteration: 0  Instance: /spi_master_tb/uut File: /home/josh/Documents/dDesign/spi_master.sv
+# ** Warning: (vsim-3722) /home/josh/Documents/dDesign/spi_master.sv(87): [TFMPC] - Missing connection for port 'done'.
+run
+# ** Warning: (vsim-3116) Problem reading symbols from linux-gate.so.1 : can not open ELF file.
+#                    0 << Sim starting >> 
+# Compile of spi_master.sv was successful.
+restart
+# Loading work.spi_master_tb
+# Loading work.spi_master
+# ** Warning: (vsim-3017) /home/josh/Documents/dDesign/spi_master.sv(87): [TFMPC] - Too few port connections. Expected 9, found 8.
+#    Time: 0 ps  Iteration: 0  Instance: /spi_master_tb/uut File: /home/josh/Documents/dDesign/spi_master.sv
+# ** Warning: (vsim-3722) /home/josh/Documents/dDesign/spi_master.sv(87): [TFMPC] - Missing connection for port 'done'.
+run
+# ** Warning: (vsim-3116) Problem reading symbols from linux-gate.so.1 : can not open ELF file.
+#                    0 << Sim starting >> 
+restart
+# ** Warning: (vsim-3017) /home/josh/Documents/dDesign/spi_master.sv(87): [TFMPC] - Too few port connections. Expected 9, found 8.
+#    Time: 0 ps  Iteration: 0  Instance: /spi_master_tb/uut File: /home/josh/Documents/dDesign/spi_master.sv
+# ** Warning: (vsim-3722) /home/josh/Documents/dDesign/spi_master.sv(87): [TFMPC] - Missing connection for port 'done'.
+# Compile of spi_master.sv was successful.
+restart
+# Loading work.spi_master_tb
+# Loading work.spi_master
+# ** Warning: (vsim-3017) /home/josh/Documents/dDesign/spi_master.sv(87): [TFMPC] - Too few port connections. Expected 9, found 8.
+#    Time: 0 ps  Iteration: 0  Instance: /spi_master_tb/uut File: /home/josh/Documents/dDesign/spi_master.sv
+# ** Warning: (vsim-3722) /home/josh/Documents/dDesign/spi_master.sv(87): [TFMPC] - Missing connection for port 'done'.
+run
+# ** Warning: (vsim-3116) Problem reading symbols from linux-gate.so.1 : can not open ELF file.
+#                    0 << Sim starting >> 
+# Compile of spi_master.sv was successful.
+restart
+# Loading work.spi_master_tb
+# Loading work.spi_master
+# ** Warning: (vsim-3017) /home/josh/Documents/dDesign/spi_master.sv(87): [TFMPC] - Too few port connections. Expected 9, found 8.
+#    Time: 0 ps  Iteration: 0  Instance: /spi_master_tb/uut File: /home/josh/Documents/dDesign/spi_master.sv
+# ** Warning: (vsim-3722) /home/josh/Documents/dDesign/spi_master.sv(87): [TFMPC] - Missing connection for port 'done'.
+run
+# ** Warning: (vsim-3116) Problem reading symbols from linux-gate.so.1 : can not open ELF file.
+#                    0 << Sim starting >> 
+# Compile of spi_master.sv was successful.
+restart
+# Loading work.spi_master_tb
+# Loading work.spi_master
+# ** Warning: (vsim-3017) /home/josh/Documents/dDesign/spi_master.sv(87): [TFMPC] - Too few port connections. Expected 9, found 8.
+#    Time: 0 ps  Iteration: 0  Instance: /spi_master_tb/uut File: /home/josh/Documents/dDesign/spi_master.sv
+# ** Warning: (vsim-3722) /home/josh/Documents/dDesign/spi_master.sv(87): [TFMPC] - Missing connection for port 'done'.
+# Compile of spi_master.sv was successful.
+run
+# ** Warning: (vsim-3116) Problem reading symbols from linux-gate.so.1 : can not open ELF file.
+#                    0 << Sim starting >> 
+# Compile of spi_master.sv was successful.
+restart
+# Loading work.spi_master_tb
+# Loading work.spi_master
+# ** Warning: (vsim-3017) /home/josh/Documents/dDesign/spi_master.sv(87): [TFMPC] - Too few port connections. Expected 9, found 8.
+#    Time: 0 ps  Iteration: 0  Instance: /spi_master_tb/uut File: /home/josh/Documents/dDesign/spi_master.sv
+# ** Warning: (vsim-3722) /home/josh/Documents/dDesign/spi_master.sv(87): [TFMPC] - Missing connection for port 'done'.
+run
+# ** Warning: (vsim-3116) Problem reading symbols from linux-gate.so.1 : can not open ELF file.
+#                    0 << Sim starting >> 
+# Compile of spi_master.sv was successful.
+restart
+# Loading work.spi_master_tb
+# Loading work.spi_master
+# ** Warning: (vsim-3017) /home/josh/Documents/dDesign/spi_master.sv(87): [TFMPC] - Too few port connections. Expected 9, found 8.
+#    Time: 0 ps  Iteration: 0  Instance: /spi_master_tb/uut File: /home/josh/Documents/dDesign/spi_master.sv
+# ** Warning: (vsim-3722) /home/josh/Documents/dDesign/spi_master.sv(87): [TFMPC] - Missing connection for port 'done'.
+run
+# ** Warning: (vsim-3116) Problem reading symbols from linux-gate.so.1 : can not open ELF file.
+#                    0 << Sim starting >> 
+# End time: 23:50:24 on Apr 05,2016, Elapsed time: 7:45:49
+# Errors: 0, Warnings: 30

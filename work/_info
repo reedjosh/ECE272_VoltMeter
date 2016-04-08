@@ -1,0 +1,56 @@
+m255
+K4
+z2
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 d/home/josh/Documents/dDesign
+vspi_master
+Z1 DXx6 sv_std 3 std 0 22 WmjPaeP=7F5?QFXzJ>D[Q2
+Z2 !s110 1459899001
+!i10b 1
+!s100 VjYTBLc^HMdmhkJL06WAX3
+IYAi^hk[5@_gb<WJnfN7h63
+Z3 VDg1SIo80bB@j0V0VzS_@n1
+Z4 !s105 spi_master_sv_unit
+S1
+R0
+Z5 w1459898995
+Z6 8/home/josh/Documents/dDesign/spi_master.sv
+Z7 F/home/josh/Documents/dDesign/spi_master.sv
+L0 18
+Z8 OV;L;10.4b;61
+r1
+!s85 0
+31
+Z9 !s108 1459899001.000000
+Z10 !s107 /home/josh/Documents/dDesign/spi_master.sv|
+Z11 !s90 -reportprogress|300|-work|work|-sv|-stats=none|/home/josh/Documents/dDesign/spi_master.sv|
+!i113 1
+Z12 o-work work -sv
+vspi_master_tb
+R1
+R2
+!i10b 1
+!s100 @[;:gDL8SKP;=NFb=jk1:3
+I<1lC8nojQo1nnD?75<TH`2
+R3
+R4
+S1
+R0
+R5
+R6
+R7
+L0 72
+R8
+r1
+!s85 0
+31
+R9
+R10
+R11
+!i113 1
+R12
