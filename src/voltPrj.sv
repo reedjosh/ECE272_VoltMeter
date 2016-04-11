@@ -14,10 +14,10 @@
 //=============================== top ======
 //==========================================
 module Sev_Seg( input  logic                reset, 
-                input  logic                MISO, drdy,
+                input  logic                MISO,
                 output logic unsigned [6:0] LEDs, 
                 output logic          [2:0] sel, 
-                output logic                MOSI, adc_reset, CS, SCK );
+                output logic                MOSI, adc_reset, SCK );
     
     logic done;
     logic clk_2Mhz;
@@ -27,36 +27,36 @@ module Sev_Seg( input  logic                reset,
     logic unsigned [3:0] cnt;
     logic unsigned [15:0] temp_data, data;
     logic [7:0] data_byte;
-    enum{CONFIGURE, POLL_DRDY, RQST_DATA, READ_DATA1, READ_DATA2} state;
+    enum{CONFIGURE, RQST_COMM, READ_COMM, RQST_DATA, READ_DATA1, READ_DATA2} state;
 
-    // Set Oscillator
+    // set oscillator frequency 2.08Mhz
     defparam OSCH_inst.NOM_FREQ = "2.08";
 
-    // Instantiate Oscillator
+    // instantiate oscillator
     OSCH OSCH_inst( .STDBY ( 0        ),
                     .OSC   ( clk_2Mhz ) );
 
     clk_cntr cc1 ( // Data update clock counter
        .reset    ( reset     ),
-       .cnt_to   ( 260000    ), // 2.08Mhz / 260000 = 8hz
+       .cnt_to   ( 130000    ), // 2.08Mhz / 130000 = 16hz
        .clk      ( clk_2Mhz  ),
-       .clk_o    ( clk_4hz   ) );
+       .clk_o    ( clk_16hz  ) );
 
-    clk_cntr cc2 ( // Clock Counter
+    clk_cntr cc2 ( // seg_driver clock counter
        .reset    ( reset     ),
        .cnt_to   ( 4150      ), // 2.08Mhz / 8 = ~500hz
        .clk      ( clk_2Mhz  ),
        .clk_o    ( clk_500hz ) );
 
     seg_driver disp ( 
-        .clk        ( clk_500hz ), 
-        .reset      ( reset     ),
-        .num        ( data      ),
-        .strobe     ( 1'b1      ),
-        .LEDs       ( LEDs      ), 
-        .sel        ( sel       ) );
+        .clk        ( clk_500hz ),   // refresh rate is 1/4 input clk
+        .reset      ( reset     ),   
+        .num        ( data      ),   // num to display
+        .strobe     ( 1'b1      ),   // update immediately
+        .LEDs       ( LEDs      ),   // sev_seg out
+        .sel        ( sel       ) ); // segment select bits
     
-    always_ff @(posedge clk_4hz, negedge reset) 
+    always_ff @(posedge clk_16hz, negedge reset) 
         if (~reset) data <= 0;
         else data <= (temp_data*1000)/13107;
 
@@ -130,15 +130,32 @@ module Sev_Seg( input  logic                reset,
 
                     // Transition State
                     if(cnt==0) begin
-                        state <= POLL_DRDY;
+                        state <= RQST_COMM;
+                        transmit <= 0;
+                        to_send  <= 8;
+                        end
+                    end
+                RQST_COMM : begin
+                    transmit <= 1;
+                    if (done && (prev_done != done)) begin
+                        state    <= READ_COMM;
                         transmit <= 0;
                         end
                     end
-                POLL_DRDY : begin
-                        if (~drdy) state <= RQST_DATA;
-                        to_send  <= 56; // read
+                READ_COMM : begin
+                    transmit <= 1;
+                    if (done && (prev_done != done)) begin
+                        if (data_byte[7] == 1) begin 
+                            state    <= RQST_DATA;
+                            to_send  <= 56; // read
+                            end
+                        else begin
+                            state    <= RQST_COMM;
+                            to_send  <= 8; // read
+                            end
                         transmit <= 0;
                         end
+                    end
                 RQST_DATA : begin
                     transmit <= 1; 
                     if (done && prev_done!=done) begin
@@ -157,9 +174,10 @@ module Sev_Seg( input  logic                reset,
                 READ_DATA2 : begin
                     transmit <= 1; 
                     if (done && prev_done!=done) begin
-                        transmit <= 0;
-                        state    <= POLL_DRDY;
                         temp_data[7:0] <= data_byte;
+                        transmit <= 0;
+                        state    <= RQST_COMM;
+                        to_send  <= 8;
                         end
                     end
                 default : state <= CONFIGURE;
@@ -168,8 +186,6 @@ module Sev_Seg( input  logic                reset,
             end
         end
     
-    //assign CS = ~transmit;
-    assign CS = 0;
 
     /* To use, load 'to_send' with a byte of data while holding 'transmit' low. 
     *  Then switch 'transmit' high. 
@@ -183,10 +199,10 @@ module Sev_Seg( input  logic                reset,
     spi_master spi (
         // inputs
         .clk       ( clk_2Mhz ),
-        .reset     ( reset      ),
-        .MISO      ( MISO       ),
-        .transmit  ( transmit   ),
-        .to_send   ( to_send    ),
+        .reset     ( reset    ),
+        .MISO      ( MISO     ),
+        .transmit  ( transmit ),
+        .to_send   ( to_send  ),
         // outputs
         .MOSI      ( MOSI      ),
         .SCK       ( SCK       ),
