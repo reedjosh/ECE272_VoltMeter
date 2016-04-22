@@ -3,10 +3,10 @@
     <Options/>
     <Implementation title="impl1" dir="impl1" description="impl1" synthesis="synplify" default_strategy="Strategy1">
         <Options/>
-        <Source name="../../dDesign/voltPrj.sv" type="Verilog" type_short="Verilog">
+        <Source name="../src/voltPrj.sv" type="Verilog" type_short="Verilog">
             <Options/>
         </Source>
-        <Source name="../../dDesign/spi_master.sv" type="Verilog" type_short="Verilog">
+        <Source name="../src/spi_master.sv" type="Verilog" type_short="Verilog">
             <Options/>
         </Source>
         <Source name="impl1/impl1.xcf" type="Programming Project File" type_short="Programming">

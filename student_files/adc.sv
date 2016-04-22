@@ -1,8 +1,8 @@
 // Author: Joshua Reed
 // Class:  ECE 272, Spring 2016
-// File: volt_meter.sv
+// File: adc.sv
 // Description: 
-// Full unipolar volt meter implementation.
+// Unipolar volt meter implementation.
 // spi_master is instantiated to communicate with the AD7705. 
 // A state machine is then used to setup and poll the ADC for 
 // voltage readings. 
@@ -10,154 +10,24 @@
 // the AD7705 board, and the default gain settings. 
 
 
-//==========================================
-//=============================== top ======
-//==========================================
-module voltPrj( input  logic                reset, 
-                input  logic                MISO,
-                output logic unsigned [6:0] LEDs, 
-                output logic          [2:0] sel, 
-                output logic                MOSI, adc_reset, SCK );
+
+
+/* instantiation template
+ *
+ *
+ *
+    adc volt_meter( .reset    ( your signals here ),   // FPGA reset
+                    .clk_2Mhz ( your signals here ),   // directly from OSCH 2.08 MHz Oscillator
+                    .MISO     ( your signals here ),   // Pass through to ADC Din
+                    .raw_data ( your signals here ),   // 16 bit unsigned 0-5V
+                    .MOSI     ( your signals here ),   // Pass through to ADC Dout
+                    .adc_reset( your signals here ),   // Pass through to ADC reset
+                    .SCK      ( your signals here ) ); // Pass through to ADC SCK
+ *
+ *
+ *
+*/
     
-    logic clk_2Mhz;
-    logic clk_500hz;
-    logic unsigned [15:0] data, raw_data;
-
-    // set oscillator frequency 2.08Mhz
-    defparam OSCH_inst.NOM_FREQ = "2.08";
-
-    // instantiate oscillator
-    OSCH OSCH_inst( .STDBY ( 0        ),
-                    .OSC   ( clk_2Mhz ) );
-
-    clk_cntr cc1 ( // Data update clock counter
-       .reset    ( reset     ),
-       .cnt_to   ( 130000    ), // 2.08Mhz / 130000 = 8hz
-       .clk      ( clk_2Mhz  ),
-       .clk_o    ( clk_16hz  ) );
-
-    clk_cntr cc2 ( // seg_driver clock counter
-       .reset    ( reset     ),
-       .cnt_to   ( 4150      ), // 2.08Mhz / 8 = ~250hz
-       .clk      ( clk_2Mhz  ),
-       .clk_o    ( clk_500hz ) );
-
-    always_ff @(posedge clk_16hz, negedge reset) // update at 16hz
-        if (~reset) data <= 0;
-        else data <= (raw_data*1000)/13107; // convert data to voltage
-
-    seg_driver disp ( 
-        .clk        ( clk_500hz ),   // refresh rate is 1/4 input clk
-        .reset      ( reset     ),   
-        .num        ( data      ),   // num to display
-        .strobe     ( 1'b1      ),   // update immediately
-        .LEDs       ( LEDs      ),   // sev_seg out
-        .sel        ( sel       ) ); // segment select bits
-
-    adc volt_meter( .reset    ( reset     ), 
-                    .clk_2Mhz ( clk_2Mhz  ), 
-                    .MISO     ( MISO      ),
-                    .raw_data ( raw_data  ), // 16 bit unsigned 0-5V
-                    .MOSI     ( MOSI      ),
-                    .adc_reset( adc_reset ), 
-                    .SCK      ( SCK       ) );
-    
-    endmodule
-
-//==========================================
-//============================== clk_cntr ==
-//==========================================
-module clk_cntr( input  logic reset, clk,
-                 input  int   cnt_to,
-                 output logic clk_o );
-
-    logic unsigned [20:0] cnt;
-
-    always_ff @(posedge clk, negedge reset) 
-        if (~reset) begin
-            clk_o <= 0;
-            cnt <= 0; 
-            end
-        else if (cnt >= cnt_to) begin
-            clk_o <= ~clk_o;
-            cnt <= 0; 
-            end
-        else cnt <= cnt+1;
-
-    endmodule
-
-//==========================================
-//============================ seg_driver ==
-//==========================================
-module seg_driver( input  logic                 clk, reset, strobe,
-                   input  logic unsigned [15:0] num,
-                   output logic unsigned [6:0]  LEDs, 
-                   output logic          [2:0]  sel );
-
-    logic unsigned [3:0] segs [3:0];
-    logic [1:0] state, next_state;
-    
-    //== Digit Parsing ======================
-    // Includes a check for numbers above
-    // what can be displayed
-    // Also incorporates a strobe 
-    always_ff @(posedge clk, negedge reset) 
-        if (~reset) segs <= '{default:'0};
-        else 
-            if (strobe)
-                if (num > 9999) segs <= '{default:'{default:9}};
-                else begin
-                    segs[0] <=  num      % 10;
-                    segs[1] <= (num/10)  % 10;
-                    segs[2] <= (num/100) % 10;
-                    segs[3] <=  num/1000;
-                    end
-
-    //== Seg Decoding =======================
-    // Digit multiplexing is done by dereferencing
-    // the segs array with the value of state.
-    always_comb
-	    case( segs[state] ) //GFE_DCBA
-            0:        LEDs=7'b100_0000;
-            1:        LEDs=7'b111_1001;
-            2:        LEDs=7'b010_0100;
-            3:        LEDs=7'b011_0000;
-            4:        LEDs=7'b001_1001;
-            5:        LEDs=7'b001_0010;
-            6:        LEDs=7'b000_0010;
-            7:        LEDs=7'b111_1000;
-            8:        LEDs=7'b000_0000;
-            9:        LEDs=7'b001_1000;
-            default:  LEDs=7'b100_0000;
-            endcase
-
-    //== State ==============================
-    // 4 states total - one for each digit
-    always_ff @(posedge clk, negedge reset) 
-        if (~reset) state <= 00;
-        else        state <= next_state;
-
-    always_comb
-        case(state)
-            0: next_state=2'b01;
-            1: next_state=2'b10;
-            2: next_state=2'b11;
-            3: next_state=2'b00;
-            default: next_state=00;
-            endcase
-
-    //== Digit Selects =======================
-    always_comb
-        case(state)
-            0: sel=3'b000;
-            1: sel=3'b001;
-            2: sel=3'b011;
-            3: sel=3'b100;
-            default: sel=3'b000;
-            endcase
-
-    endmodule
-
 //==========================================
 //=============================== ADC ======
 //==========================================
@@ -301,16 +171,6 @@ module adc( input  logic                 reset, clk_2Mhz, MISO,
             end
         end
     
-
-    /* To use, load 'to_send' with a byte of data while holding 'transmit' low. 
-    *  Then switch 'transmit' high. 
-    *  The byte will be sent over the next 16 clk cycles 
-    *  'done' will go high upon completion. 
-    *  To clear done pull transmit to low.
-    *  MISO -> Master In Slave Out
-    *  MOSI -> Master Out Slave In
-    *  SCK  -> Serial Shift Clock
-    */ 
     spi_master spi (
         // inputs
         .clk       ( clk_2Mhz ),
@@ -327,10 +187,75 @@ module adc( input  logic                 reset, clk_2Mhz, MISO,
     endmodule
 
 
+/*
+ * AUTHOR: Joshua Reed
+ * DATE: Nov. 25, 2015
+ * DESCRIPTION: SPI master module that can be incorporated into a
+ * larger project.  
+ * To use, load to_send with a byte of data while holding transmit low. 
+ * Then switch transmit high. The byte will be sent over
+ * the next 16 clk cycles, and done will go high. To clear done
+ * pull transmit to low.
+ * MISO -> Master In Slave Out
+ * MOSI -> Master Out Slave In
+ * SCK -> Shift Clock
+ * 
+ */
 
 
+module spi_master( 
+    input clk, reset, MISO, transmit,
+    input [7:0] to_send, // data to be sent
+    output logic MOSI, SCK, 
+    output logic [7:0] received,
+    output logic done );
 
+    enum {setup, communicate, finished} state;
+    logic unsigned [3:0] cnt;
+    logic [7:0] hold_to_send;
+        
+    always_comb 
+        if (cnt % 2 == 0) SCK <= 0;
+        else SCK <= 1;
 
+    assign MOSI = hold_to_send[7]; // Send MSB
+
+    always_comb 
+        if (state == finished) done <= 1;
+        else done <= 0;
+
+    always_ff @ (posedge clk, negedge reset)
+        if (~reset) begin
+            state <= setup;
+            cnt <= 15;
+            received <= 0;
+            end 
+        else begin
+            case(state)
+                setup: begin
+                    hold_to_send <= {to_send[0], to_send[7:1]}; // Load to send reverse cycled by one
+                    if (transmit) state <= communicate;
+                    end
+                communicate: begin
+                    cnt <= cnt-1;
+                    if (cnt % 2 == 1) begin // odd cycle
+                        if (cnt != 1) hold_to_send <= {hold_to_send[6:0], hold_to_send[7]}; // Rotate data on even number cycles
+                        received <= {received[6:0], MISO}; // Save current data bit in received
+                        end
+                    if (cnt == 0) begin 
+                        state <= finished;
+                        received <= {received[6:0], MISO}; // Save current data bit in received
+                        end
+                    end
+                finished: begin
+                    cnt <= 15;
+                    if (~transmit) state <= setup;
+                    end
+                default: state <= setup;
+                endcase
+            end 
+
+    endmodule
 
 
 
