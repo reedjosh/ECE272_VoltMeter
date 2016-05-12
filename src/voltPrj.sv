@@ -170,9 +170,6 @@ module adc( input  logic                 reset, clk_2Mhz, MISO,
     logic unsigned [7:0] to_send;
     logic unsigned [15:0] raw_data;
     logic [7:0] data_byte;
-        logic prev_done;
-        logic unsigned [4:0] cnt;
-        enum{CONFIGURE, RQST_COMM, READ_COMM, RQST_DATA, READ_DATA1, READ_DATA2} state;
    
     /* == States ============================= 
     *
@@ -219,6 +216,9 @@ module adc( input  logic                 reset, clk_2Mhz, MISO,
     * See p33 of the datasheet for state diagram.
     */
     always_ff @(posedge clk_2Mhz, negedge reset) begin : adc_sm
+        logic prev_done;
+        logic unsigned [4:0] cnt;
+        enum{CONFIGURE, RQST_COMM, READ_COMM, RQST_DATA, READ_DATA1, READ_DATA2} state;
         if (~reset) begin 
             state <= CONFIGURE;
             cnt <= 30;
